@@ -1,6 +1,13 @@
 {
+  "name": "pre-work-server",
+  "version": "1.0.0",
+  "description": "A simple WebSocket server for a barebones MMORPG",
+  "main": "server.js",
   "scripts": {
     "start": "node server.js"
+  },
+  "engines": {
+    "node": ">=18.0.0"
   },
   "dependencies": {
     "ws": "^8.18.3"

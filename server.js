@@ -4,8 +4,9 @@
 const WebSocket = require('ws');
 const fs = require('fs'); // <--- ADD THIS LINE
 
-// Create a new WebSocket server on port 8080
-const wss = new WebSocket.Server({ port: 8080 });
+// Create a new WebSocket server on the port provided by the environment or default to 8080
+const PORT = process.env.PORT || 8080;
+const wss = new WebSocket.Server({ port: PORT });
 
 // This object will store the state of all players in the game world
 const players = {};
@@ -101,7 +102,7 @@ function loadState() {
 // Call loadState() when the server starts
 loadState(); // <--- ADD THIS LINE
 
-console.log('MMORPG Server is running on ws://localhost:8080');
+console.log(`MMORPG Server is running on port ${PORT}`);
 
 // This function sends a message to all connected clients
 function broadcast(data) {
