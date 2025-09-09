@@ -2,11 +2,34 @@
 // It will handle player connections, state, and movement.
 
 const WebSocket = require('ws');
-const fs = require('fs'); // <--- ADD THIS LINE
+const fs = require('fs');
+const http = require('http');
+const path = require('path');
 
 // Create a new WebSocket server on the port provided by the environment or default to 8080
 const PORT = process.env.PORT || 8080;
-const wss = new WebSocket.Server({ port: PORT });
+
+// Create HTTP server to serve static files
+const server = http.createServer((req, res) => {
+    if (req.url === '/' || req.url === '/index.html') {
+        // Serve the main HTML file
+        fs.readFile(path.join(__dirname, 'index.html'), (err, content) => {
+            if (err) {
+                res.writeHead(500);
+                res.end('Error loading index.html');
+                return;
+            }
+            res.writeHead(200, { 'Content-Type': 'text/html' });
+            res.end(content);
+        });
+    } else {
+        res.writeHead(404);
+        res.end('Not Found');
+    }
+});
+
+// Create WebSocket server that uses the same HTTP server
+const wss = new WebSocket.Server({ server });
 
 // This object will store the state of all players in the game world
 const players = {};
@@ -102,7 +125,10 @@ function loadState() {
 // Call loadState() when the server starts
 loadState(); // <--- ADD THIS LINE
 
-console.log(`MMORPG Server is running on port ${PORT}`);
+// Start the server
+server.listen(PORT, () => {
+    console.log(`MMORPG Server is running on port ${PORT}`);
+});
 
 // This function sends a message to all connected clients
 function broadcast(data) {
